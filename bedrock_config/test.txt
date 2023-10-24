@@ -1,0 +1,23 @@
+No SX
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,No SX,NA,NA,NA,NA,With Enclosure,Tile,V3000 basic,Generic top panel,Generic rear panel,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,No SX,NA,NA,NA,NA,With Enclosure,60W,V3000 basic,Generic top panel,Generic rear panel,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,No SX,NA,NA,NA,NA,Without Enclosure,NA,NA,NA,NA,NA
+
+No wifi and No Modem
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,No WiFi,No Modem,With Enclosure,Tile,V3000 basic,Top panel with antennas,Generic rear panel,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,No WiFi,No Modem,With Enclosure,Tile,V3000 basic,Generic top panel,Generic rear panel,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,No WiFi,No Modem,With Enclosure,60W,V3000 basic,Top panel with antennas,Generic rear panel,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,No WiFi,No Modem,With Enclosure,60W,V3000 basic,Generic top panel,Generic rear panel,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,No WiFi,No Modem,Without Enclosure,NA,NA,NA,NA,NA
+
+Customer's wifi and No Modem
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,Customer's WiFi,No Modem,With Enclosure,Tile,V3000 basic,Top panel with antennas,Generic rear panel,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,Customer's WiFi,No Modem,With Enclosure,60W,V3000 basic,Top panel with antennas,Generic rear panel,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,Customer's WiFi,No Modem,Without Enclosure,NA,NA,NA,NA,NA
+
+Cutsomer's wifi and Customer's modem
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,Customer's WiFi,Customer's Modem,With Enclosure,Tile,V3000 basic,Top panel with antennas,Rear panel with SIM trays,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,Customer's WiFi,Customer's Modem,With Enclosure,Tile,V3000 basic,Top with 4x SMA for modem,Rear panel with SIM trays,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,Customer's WiFi,Customer's Modem,With Enclosure,60W,V3000 basic,Top panel with antennas,Rear panel with SIM trays,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,Customer's WiFi,Customer's Modem,With Enclosure,60W,V3000 basic,Top with 4x SMA for modem,Rear panel with SIM trays,Generic bottom panel
+Ryzen V3C48 8C/16T/45W,8 GB (1x 8 GB DDR5),960 GB Micron 7450 with PLP,No OS installed,NIO V3000 basic,SX 4M2,No storage,No storage,Customer's WiFi,Customer's Modem,Without Enclosure,NA,NA,NA,NA,NA

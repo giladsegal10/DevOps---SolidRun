@@ -1,0 +1,7 @@
+RAM,ram_code,PM,pm_code,DCCON,dccon_code,Temperature,temp_code
+No RAM,RAM:NO,No PM,PM:NO,DCCON Phoenix Terminal,DC:TERM,0C to 70C,TEMP:070
+8 GB (1x 8 GB DDR5),RAM:8,PM 1260,PM:1260,,,-40C to 85C,TEMP:4085
+16 GB (2x 8 GB DDR5),RAM:16,,,,,,
+32 GB (2x 16 GB DDR5),RAM:32,,,,,,
+32 GB ECC (2x 16 GB DDR5 ECC),RAM:32ECC,,,,,,
+64 GB (2x 32 GB DDR5),RAM:64,,,,,,
