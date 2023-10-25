@@ -339,14 +339,24 @@ jQuery(document).ready(function( $ ) {
 	};
 
 	var optionDescriptions = {
-		"V3C48": "45W CPU 8C/16T", 								// CPU
-		"V3C18I": "15W CPU 8C/16T",								// CPU
-		"NO": "Requires applying thermal paste",	// RAM
-		"8":  "1x8 GB DDR5",
-		"16": "2x8 GB DDR5",
-		"32": "2x16 GB DDR5",
-		"32ECC": "2x16 GB DDR5 ECC",
-		"64": "2x32 GB DDR5",
+		"CPU:V3C48": "45W CPU 8C/16T", "CPU:V3C18I": "15W CPU 8C/16T",
+		"RAM:NO": "Requires applying thermal paste", "RAM:8": "1x8 GB DDR5",
+		"RAM:16": "2x8 GB DDR5", "RAM:32": "2x16 GB DDR5",
+		"RAM:32ECC": "2x16 GB DDR5 ECC", "RAM:64": "2x32 GB DDR5",
+		"NV0:1TPLP": "PLP: power loss protection",
+		"SX:4M2": "4x M.2 sockets",
+		"WIFI:CUST": "M.2 key-E 2230\nPCIe + USB 2\nRequires antennas",
+		"WIFI:AX210": "Requires antennas",
+		"MODEM:CUST": "M.2 key-E 2230\nUSB 3.2\nRequires antennas & SIM",
+		"MODEM:CAT4": "Requires antennas & SIM", "MODEM:CAT12": "Requires antennas & SIM",
+		"MODEM:5G": "Requires antennas & SIM",
+		"PM:NO": "12V - 24V DC in", "PM:1260": "12V - 60V DC in",
+		"ENC:NO": "requires customer's thermal design",
+		"EWALL:TILE": "29x160x130 mm\n15W / 45W CPU\nConduction cooling",
+		"EWALL:30W": "45x160x130 mm\n15W CPU\nPassive cooling",
+		"EWALL:60W": "73x160x130 mm\n45W CPU\nPassive cooling",
+		"ETOP:GENERIC": "No antennas", "ETOP:4ANT": "Required for Wifi or modem",
+		"EREAR:2SIM": "Required for modem",
 	};
 
 	var enterHere = 188; 		// id of input field for configuration string
@@ -370,8 +380,21 @@ jQuery(document).ready(function( $ ) {
 		if (Object.values(featuresIDs).includes(parseInt($(event.target).attr('id').replace('nf-field-', '')))) {
 			handleDropdownChange();
 			CreateConfigString(); // After change in dropdowns the config string in #enterhere will be updated
+			addTitlesToOptions();
 		}
 	});
+
+	function enableOnlyCopyPaste() {
+		var textareaElement = $('#nf-field-' + enterHere);
+		textareaElement.attr('readonly', "readonly");
+
+		textareaElement.on('paste', function() {
+	    textareaElement.prop('readonly', false);  // Temporarily remove readonly for pasting
+	    setTimeout(function() {
+	      textareaElement.prop('readonly', true);  // Restore readonly after paste is done
+	    }, 50);
+  	});
+	}
 
 	// Create config string from dropdowns
 	function CreateConfigString() {
@@ -386,20 +409,27 @@ jQuery(document).ready(function( $ ) {
 		jQuery('#nf-field-' + enterHere).val(featureTexts.join(','));
 	}
 
-	// ###################### TO EDIT #################################
-	// Function to add titles to options
+	/*
+	Function to add titles to options. The titles are notes from the V3000 diagram.
+	The function goes over every feature (using DOM id's), collects all the options
+	from the feature and then for each option it checks if there is a key for it in
+	optionDescriptions map.
+	*/
 	function addTitlesToOptions() {
-		// Find the select element and its options
-		var selectElement = $('#nf-field-110');
-		var options = selectElement.find('option');
+		jQuery.each(featuresIDs, function(feature, id) {
+			// Find the select element and its options
+			var selectElement = $('#nf-field-' + id);
+			var options = selectElement.find('option');
 
-		// Add a title to each option
-		options.each(function() {
-			var optionValue = $(this).attr('value');
-			var description = optionDescriptions[optionValue];
-			if (description) {
-				$(this).attr('title', description);
-			}
+			// Add a title to each option
+			options.each(function() {
+				var optionValue = $(this).attr('value');
+				var fullKey = feature + ":" + optionValue;
+				var description = optionDescriptions[fullKey];
+				if (description) {
+					$(this).attr('title', description);
+				}
+			});
 		});
 	}
 
@@ -474,6 +504,7 @@ jQuery(document).ready(function( $ ) {
 			updateParagraphWithFeatures();
 			insertCopyButton();
 			addTitlesToOptions();
+			enableOnlyCopyPaste();
 	}, 250);
 
 });
@@ -487,5 +518,7 @@ jQuery(document).ready(function( $ ) {
 				2. css for floating box is inside the V3000 form builder
 				You go to the second paragraph field (below 'Enter Configuration Here:')
 				In the end of 'Styles' tab there is the Advanced CSS for this element
+
+				3. this code here (includes js and css) is in WP page editor inside a code block
 */
 </script>
