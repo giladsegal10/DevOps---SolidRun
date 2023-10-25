@@ -300,6 +300,10 @@ jQuery(document).ready(function( $ ) {
   text-align: center;
   border: 2px solid rgba(33, 68, 72, 0.59);
 }
+.V3000-diagram {
+  font-size: 18px;
+  font-weight: bold;
+}
 </style>
 
 <script>
@@ -334,7 +338,18 @@ jQuery(document).ready(function( $ ) {
 		EREAR: "Rear Panel", EBOTTOM: "Bottom Panel", TEMP: "Temperature"
 	};
 
-	var enterHere = 158; 		// id of input field for configuration string
+	var optionDescriptions = {
+		"V3C48": "45W CPU 8C/16T", 								// CPU
+		"V3C18I": "15W CPU 8C/16T",								// CPU
+		"NO": "Requires applying thermal paste",	// RAM
+		"8":  "1x8 GB DDR5",
+		"16": "2x8 GB DDR5",
+		"32": "2x16 GB DDR5",
+		"32ECC": "2x16 GB DDR5 ECC",
+		"64": "2x32 GB DDR5",
+	};
+
+	var enterHere = 188; 		// id of input field for configuration string
 	var floatingBox = 185;	// id of floating box
 
 	// Custom event that will be triggered after updating a field
@@ -354,8 +369,39 @@ jQuery(document).ready(function( $ ) {
 		// Check if the changed select element is one of your feature dropdowns
 		if (Object.values(featuresIDs).includes(parseInt($(event.target).attr('id').replace('nf-field-', '')))) {
 			handleDropdownChange();
+			CreateConfigString(); // After change in dropdowns the config string in #enterhere will be updated
 		}
 	});
+
+	// Create config string from dropdowns
+	function CreateConfigString() {
+		var featureTexts = [];
+		jQuery.each(featuresIDs, function(key, value) {
+    	//console.log(key + ":" + value);
+			var currentValue = jQuery('#nf-field-' + value).val();
+			if (currentValue) {
+				featureTexts.push(key + ":" + currentValue);
+		  }
+		});
+		jQuery('#nf-field-' + enterHere).val(featureTexts.join(','));
+	}
+
+	// ###################### TO EDIT #################################
+	// Function to add titles to options
+	function addTitlesToOptions() {
+		// Find the select element and its options
+		var selectElement = $('#nf-field-110');
+		var options = selectElement.find('option');
+
+		// Add a title to each option
+		options.each(function() {
+			var optionValue = $(this).attr('value');
+			var description = optionDescriptions[optionValue];
+			if (description) {
+				$(this).attr('title', description);
+			}
+		});
+	}
 
   // Function to update the features paragraph with selected values
 	function updateParagraphWithFeatures() {
@@ -427,8 +473,19 @@ jQuery(document).ready(function( $ ) {
 	setTimeout(function() {
 			updateParagraphWithFeatures();
 			insertCopyButton();
+			addTitlesToOptions();
 	}, 250);
 
 });
 
+
+/* NOTES
+				1. css for different features is inside Ninja Forms plugin:
+				Ninja Forms -> styling -> Form styles tab -> Container styles -> Advanced CSS
+				make sure to mark the box 'Show Advanced CSS Properties'
+
+				2. css for floating box is inside the V3000 form builder
+				You go to the second paragraph field (below 'Enter Configuration Here:')
+				In the end of 'Styles' tab there is the Advanced CSS for this element
+*/
 </script>
