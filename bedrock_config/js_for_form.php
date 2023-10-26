@@ -319,6 +319,19 @@ jQuery(document).ready(function( $ ) {
     return this; // To maintain chainability
   };
 
+	// All the options codes for validation of configuration string
+	var optionCodes = [
+		"CPU:V3C48", "CPU:V3C18I", "RAM:8", "RAM:16", "RAM:32", "RAM:32ECC", "RAM:64", "NV0:NO",
+		"NV0:1TPLP", "NV0:1T", "NV0:256GEN3", "NV0:512GEN3", "NV0:1TGEN3", "NV0:2TGEN3", "OS:NO",
+		"OS:UBU", "OS:WIN11P", "OS:NA", "NIO:V3B", "NIO:V3MIN",	"SX:NO", "SX:4M2", "NV1:NO", "NV1:1T",
+		"NV1:1TGEN3", "NV1:2TGEN3", "NV1:NA",	"NV2:NO", "NV2:1T", "NV2:1TGEN3", "NV2:2TGEN3",
+		"NV2:NA", "WIFI:NO", "WIFI:CUST", "WIFI:AX210", "WIFI:NA", "MODEM:NO", "MODEM:CUST",
+		"MODEM:CAT4", "MODEM:CAT12", "MODEM:5G", "MODEM:NA", "PM:NO", "PM:1260", "DC:TERM", "ENC:YES",
+		"ENC:NO", "EWALL:TILE", "EWALL:60W", "EWALL:30W", "EWALL:NA", "EFRONT:V3BASIC", "EFRONT:NA",
+		"ETOP:4ANT", "ETOP:GENERIC", "ETOP:4XSMA", "ETOP:NA", "EREAR:2SIM", "EREAR:GENERIC",
+		"EREAR:NA", "EBOTTOM:GENERIC", "EBOTTOM:NA", "TEMP:070", "TEMP:4085"
+	];
+
 	// The features code names and their respective id according to the DOM
 	var featuresIDs = {
 		CPU: 110, RAM: 111, NV0: 112, OS: 113,
@@ -381,20 +394,21 @@ jQuery(document).ready(function( $ ) {
 			handleDropdownChange();
 			CreateConfigString(); // After change in dropdowns the config string in #enterhere will be updated
 			addTitlesToOptions();
+			// enableOnlyCopyPaste();
 		}
 	});
 
-	function enableOnlyCopyPaste() {
-		var textareaElement = $('#nf-field-' + enterHere);
-		textareaElement.attr('readonly', "readonly");
-
-		textareaElement.on('paste', function() {
-	    textareaElement.prop('readonly', false);  // Temporarily remove readonly for pasting
-	    setTimeout(function() {
-	      textareaElement.prop('readonly', true);  // Restore readonly after paste is done
-	    }, 50);
-  	});
-	}
+	// function enableOnlyCopyPaste() {
+	// 	var textareaElement = $('#nf-field-' + enterHere);
+	// 	textareaElement.attr('readonly', "readonly");
+	//
+	// 	textareaElement.on('paste', function() {
+	//     textareaElement.prop('readonly', false);  // Temporarily remove readonly for pasting
+	//     setTimeout(function() {
+	//       textareaElement.prop('readonly', true);  // Restore readonly after paste is done
+	//     }, 50);
+  // 	});
+	// }
 
 	// Create config string from dropdowns
 	function CreateConfigString() {
@@ -442,7 +456,7 @@ jQuery(document).ready(function( $ ) {
 	    var currentValue = jQuery('#nf-field-' + featuresIDs[name] + " option:selected").text();
       // console.log("this is: " + currentValue);
 		  if (currentValue) {
-				featureTexts.push(featTrueNames[name] + ":\n" + currentValue);
+				featureTexts.push(featTrueNames[name] + ": " + currentValue);
 		  }
 		}
 		jQuery('#nf-field-' + floatingBox).text(featureTexts.join('\n\n'));
@@ -478,25 +492,21 @@ jQuery(document).ready(function( $ ) {
 
 	$(document).singletonListener('input change', '#nf-field-'+enterHere ,function() {
 		var currentValue = $(this).val();
-		var featurePairs = currentValue.split(',');
-		var parsedFeatures = {};
+		var featurePairs = currentValue.split(','); //CPU:V3C48
+		// var parsedFeatures = {};
 
 		featurePairs.forEach(function(pair) {
-			var parts = pair.split(':');
-			parsedFeatures[parts[0]] = parts[1]; // CPU => V3C48
-		});
-		//console.log(parsedFeatures);
-
-		for (var featureName in parsedFeatures) {
-			// Check if the featureName exists in featuresIDs
-			if (featuresIDs.hasOwnProperty(featureName)) {
+			var parts = pair.split(':'); // 0 => CPU ; 1 => V3C48
+			// parsedFeatures[parts[0]] = parts[1]; // CPU => V3C48
+			// if key is a valid feature name and the optionCode exist continue
+			if (featuresIDs.hasOwnProperty(parts[0]) && jQuery.inArray(pair, optionCodes)) {	// CPU, RAM ...
 				// Set the value in the corresponding dropdown field
-				jQuery('#nf-field-' + featuresIDs[featureName])
-				.val(parsedFeatures[featureName])
+				jQuery('#nf-field-' + featuresIDs[parts[0]])
+				.val(parts[1])
 				.trigger('change')
 				.trigger(UPDATE_EVENT);
 			}
-		}
+		});
 	});
 	jQuery('#nf-field-' + enterHere).trigger('change'); // to manually trigger the input field
 
@@ -504,7 +514,7 @@ jQuery(document).ready(function( $ ) {
 			updateParagraphWithFeatures();
 			insertCopyButton();
 			addTitlesToOptions();
-			enableOnlyCopyPaste();
+			// enableOnlyCopyPaste();
 	}, 250);
 
 });
