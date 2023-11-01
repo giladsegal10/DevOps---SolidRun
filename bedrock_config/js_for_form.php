@@ -374,6 +374,7 @@ jQuery(document).ready(function( $ ) {
 
 	var enterHere = 188; 		// id of input field for configuration string
 	var floatingBox = 185;	// id of floating box
+	var emailFieldId = 189;		// id for email field
 
 	// Custom event that will be triggered after updating a field
   var UPDATE_EVENT = 'updateFeatures';
@@ -392,7 +393,9 @@ jQuery(document).ready(function( $ ) {
 		// Check if the changed select element is one of your feature dropdowns
 		if (Object.values(featuresIDs).includes(parseInt($(event.target).attr('id').replace('nf-field-', '')))) {
 			handleDropdownChange();
-			CreateConfigString(); // After change in dropdowns the config string in #enterhere will be updated
+			setTimeout(function() {
+	     	CreateConfigString(); // After change in dropdowns the config string in #enterhere will be updated
+	  	}, 10);
 			addTitlesToOptions();
 			// enableOnlyCopyPaste();
 		}
@@ -412,16 +415,37 @@ jQuery(document).ready(function( $ ) {
 
 	// Create config string from dropdowns
 	function CreateConfigString() {
-		var featureTexts = [];
-		jQuery.each(featuresIDs, function(key, value) {
-    	//console.log(key + ":" + value);
-			var currentValue = jQuery('#nf-field-' + value).val();
-			if (currentValue) {
-				featureTexts.push(key + ":" + currentValue);
-		  }
-		});
-		jQuery('#nf-field-' + enterHere).val(featureTexts.join(','));
+	    var featureTexts = [];
+	    var inputString = jQuery('#nf-field-' + enterHere).val(); // Get the current value of the input field
+	    var inputValues = inputString.split(','); // Split by comma to get each key-value pair
+	    var inputMap = {};
+
+	    // Create a map from the current input values
+	    inputValues.forEach(function(pair) {
+	        var parts = pair.split(':');
+	        if (parts.length === 2) {
+	            inputMap[parts[0]] = parts[1];
+	        }
+	    });
+
+	    // Iterate over featuresIDs and construct the new string
+	    jQuery.each(featuresIDs, function(key, value) {
+	        var currentValue = jQuery('#nf-field-' + value).val(); // Get the current selected value of the dropdown
+	        if (currentValue) {
+	            featureTexts.push(key + ":" + currentValue);
+	        } else if (inputMap[key]) {
+	            // If there is a user-entered value that doesn't correspond to a valid option, use it
+	            featureTexts.push(key + ":" + inputMap[key]);
+	        } else {
+	            // If there's no valid option selected and no user-entered value, use 'null'
+	            featureTexts.push(key + ":");
+	        }
+	    });
+
+	    // Set the new value for the input field
+	    jQuery('#nf-field-' + enterHere).val(featureTexts.join(','));
 	}
+
 
 	/*
 	Function to add titles to options. The titles are notes from the V3000 diagram.
@@ -457,7 +481,9 @@ jQuery(document).ready(function( $ ) {
       // console.log("this is: " + currentValue);
 		  if (currentValue) {
 				featureTexts.push(featTrueNames[name] + ": " + currentValue);
-		  }
+		  } else {
+				featureTexts.push(featTrueNames[name] + ": ");
+			}
 		}
 		jQuery('#nf-field-' + floatingBox).text(featureTexts.join('\n\n'));
     insertCopyButton();
@@ -487,26 +513,48 @@ jQuery(document).ready(function( $ ) {
     }
  	}
 
+	// Function to get query string parameters
+	function getQueryStringParameter() {
+		var emailParam = 'email';
+		// Escape special regex characters in the parameter name
+		emailParam = emailParam.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+		// Create a regular expression to match the parameter in the query string
+		var regex = new RegExp("[\\?&]" + emailParam + "=([^&#]*)"),
+		// Execute the regular expression against the current URL's query string
+		results = regex.exec(location.search);
+		if (results) {
+			// If the parameter is found, decode the URL-encoded parameter value
+	 		// The replace(/\+/g, " ") part replaces any plus signs with spaces, which handles cases where spaces are encoded as plus signs
+			var userEmail = decodeURIComponent(results[1].replace(/\+/g, " "));
+			// Set the email parameter value to the email field
+			jQuery('#nf-field-' + emailFieldId).val(userEmail);
+		}
+	}
+
  	// Listen for the custom event at the document level
  	$(document).on(UPDATE_EVENT, updateParagraphWithFeatures);
 
 	$(document).singletonListener('input change', '#nf-field-'+enterHere ,function() {
 		var currentValue = $(this).val();
-		var featurePairs = currentValue.split(','); //CPU:V3C48
-		// var parsedFeatures = {};
+		var featurePairs = currentValue.split(',');
+		var parsedFeatures = {};
 
 		featurePairs.forEach(function(pair) {
-			var parts = pair.split(':'); // 0 => CPU ; 1 => V3C48
-			// parsedFeatures[parts[0]] = parts[1]; // CPU => V3C48
-			// if key is a valid feature name and the optionCode exist continue
-			if (featuresIDs.hasOwnProperty(parts[0]) && jQuery.inArray(pair, optionCodes)) {	// CPU, RAM ...
+			var parts = pair.split(':');
+			parsedFeatures[parts[0]] = parts[1]; // CPU => V3C48
+		});
+		//console.log(parsedFeatures);
+
+		for (var featureName in parsedFeatures) {
+			// Check if the featureName exists in featuresIDs
+			if (featuresIDs.hasOwnProperty(featureName)) {
 				// Set the value in the corresponding dropdown field
-				jQuery('#nf-field-' + featuresIDs[parts[0]])
-				.val(parts[1])
+				jQuery('#nf-field-' + featuresIDs[featureName])
+				.val(parsedFeatures[featureName])
 				.trigger('change')
 				.trigger(UPDATE_EVENT);
 			}
-		});
+		}
 	});
 	jQuery('#nf-field-' + enterHere).trigger('change'); // to manually trigger the input field
 
@@ -514,6 +562,7 @@ jQuery(document).ready(function( $ ) {
 			updateParagraphWithFeatures();
 			insertCopyButton();
 			addTitlesToOptions();
+			getQueryStringParameter();
 			// enableOnlyCopyPaste();
 	}, 250);
 
@@ -523,12 +572,67 @@ jQuery(document).ready(function( $ ) {
 /* NOTES
 				1. css for different features is inside Ninja Forms plugin:
 				Ninja Forms -> styling -> Form styles tab -> Container styles -> Advanced CSS
-				make sure to mark the box 'Show Advanced CSS Properties'
+				Make sure to mark the box 'Show Advanced CSS Properties'
+				You can see the css that's in the plugin right here.
 
 				2. css for floating box is inside the V3000 form builder
 				You go to the second paragraph field (below 'Enter Configuration Here:')
 				In the end of 'Styles' tab there is the Advanced CSS for this element
 
-				3. this code here (includes js and css) is in WP page editor inside a code block
+				3. this code here (includes js and css) is in WP page editor inside a code block.
+				Meanwhile the code block is in a passowrd-protected page called 'private-gilad-contact-testing'
+
+				4. Email actions: prior the configurator form, there will be a form (maybe the popup for the bedrock)
+				that will require the user to enter an email (meanwhile it's in private page of mine:
+				[contact-form-7 id="82283" title="Bedrock form email testing"]). The email that is sent
+				is with a link to the configurator page. the link itself is with the email paramater.
+				The NF page opens with this parameter on the link and it catches this pararm and use
+				it to populate the email field. The email field in the NF form exists but is with `display:none;`
+
+				[contact-form-7 id="82283" title="Bedrock form email testing"] - https://www.solid-run.com/gilad-bedrock-configurator/
+
 */
 </script>
+
+
+
+
+<style>
+	.label-left .nf-field-label {
+		padding: 0 0 20px 0;
+		text-align: left;
+		font-size:20px
+	}
+
+	.nf-form-content .nf-field-container {
+		margin-bottom: 0px;
+	}
+
+	/* "i" icon next to each feature name */
+	.nf-help {
+		padding-top:4px;
+	}
+
+	/*
+	hiding the html block with the configuration
+	hiding the email field (that is prepopulated from link in email)
+	hiding error massages for email
+	*/
+	#nf-field-132-wrap .nf-field-element,
+	#nf-field-189-container,
+	#nf-error-189 .nf-error-msg
+	{
+		display: none;
+	}
+
+	.ninja-forms-req-symbol {
+		color: #e80000!important;
+	}
+
+	.nf-error-msg {
+		margin-left: -10px;
+		margin-top: -18px;
+		margin-bottom: 15px;
+	}
+
+</style>
