@@ -372,9 +372,14 @@ jQuery(document).ready(function( $ ) {
 		"EREAR:2SIM": "Required for modem",
 	};
 
-	var enterHere = 188; 		// id of input field for configuration string
-	var floatingBox = 185;	// id of floating box
-	var emailFieldId = 189;		// id for email field
+	// for email actions when submitting
+	var hiddenFieldsIDs = {
+		"email": 189, "first_name": 192, "last_name": 193
+	};
+
+	var enterHere = 188, 				// id of input field for configuration string
+			floatingBox = 185;			// id of floating box
+
 
 	// Custom event that will be triggered after updating a field
   var UPDATE_EVENT = 'updateFeatures';
@@ -515,20 +520,22 @@ jQuery(document).ready(function( $ ) {
 
 	// Function to get query string parameters
 	function getQueryStringParameter() {
-		var emailParam = 'email';
-		// Escape special regex characters in the parameter name
-		emailParam = emailParam.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-		// Create a regular expression to match the parameter in the query string
-		var regex = new RegExp("[\\?&]" + emailParam + "=([^&#]*)"),
-		// Execute the regular expression against the current URL's query string
-		results = regex.exec(location.search);
-		if (results) {
-			// If the parameter is found, decode the URL-encoded parameter value
-	 		// The replace(/\+/g, " ") part replaces any plus signs with spaces, which handles cases where spaces are encoded as plus signs
-			var userEmail = decodeURIComponent(results[1].replace(/\+/g, " "));
-			// Set the email parameter value to the email field
-			jQuery('#nf-field-' + emailFieldId).val(userEmail);
-		}
+		jQuery.each(hiddenFieldsIDs, function(param, id) {
+			hiddenField = param;
+			// Escape special regex characters in the parameter name
+			hiddenField = hiddenField.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+			// Create a regular expression to match the parameter in the query string
+			var regex = new RegExp("[\\?&]" + hiddenField + "=([^&#]*)"),
+			// Execute the regular expression against the current URL's query string
+			results = regex.exec(location.search);
+			if (results) {
+				// If the parameter is found, decode the URL-encoded parameter value
+		 		// The replace(/\+/g, " ") part replaces any plus signs with spaces, which handles cases where spaces are encoded as plus signs
+				var value = decodeURIComponent(results[1].replace(/\+/g, " "));
+				// Set the email parameter value to the email field
+				jQuery('#nf-field-' + id).val(value);
+			}
+		});
 	}
 
  	// Listen for the custom event at the document level
@@ -563,6 +570,7 @@ jQuery(document).ready(function( $ ) {
 			insertCopyButton();
 			addTitlesToOptions();
 			getQueryStringParameter();
+			CreateConfigString();
 			// enableOnlyCopyPaste();
 	}, 250);
 
@@ -620,7 +628,9 @@ jQuery(document).ready(function( $ ) {
 	*/
 	#nf-field-132-wrap .nf-field-element,
 	#nf-field-189-container,
-	#nf-error-189 .nf-error-msg
+	#nf-error-189 .nf-error-msg,
+	#nf-field-192-container,
+	#nf-field-193-container
 	{
 		display: none;
 	}
