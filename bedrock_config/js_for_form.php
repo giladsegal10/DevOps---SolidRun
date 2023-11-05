@@ -374,7 +374,7 @@ jQuery(document).ready(function( $ ) {
 
 	// for email actions when submitting
 	var hiddenFieldsIDs = {
-		"email": 189, "first_name": 192, "last_name": 193
+		"email": 189, "full_name": 192,
 	};
 
 	var enterHere = 188, 				// id of input field for configuration string
@@ -494,7 +494,8 @@ jQuery(document).ready(function( $ ) {
     insertCopyButton();
 	}
 
-	 // Function to handle the click event of the copy button
+	// NOT IN USE
+	// Function to handle the click event of the copy button
 	function copyConfigurationString() {
     var textToCopy = jQuery('#nf-field-132-wrap .nf-field-element p:nth-child(4)').text();
     var tempTextarea = jQuery('<textarea>');
@@ -505,6 +506,7 @@ jQuery(document).ready(function( $ ) {
     //console.log("Copied: " + textToCopy); // Log the copied text
 	}
 
+	// NOT IN USE
  	// Function to insert the 'Copy String' button if it doesn't already exist
  	function insertCopyButton() {
     // Check if the button already exists in the DOM
@@ -622,15 +624,20 @@ jQuery(document).ready(function( $ ) {
 	}
 
 	/*
-	hiding the html block with the configuration
-	hiding the email field (that is prepopulated from link in email)
-	hiding error massages for email
+	132 - hiding the html block with the configuration (and the button inside it) (V3000)
+	189 - hiding the email field (that is prepopulated from link in email) (V3000)
+	192 - hiding full name field (V3000)
+	136 - hiding the html block with the configuration (R7000)
+	195 - hiding the email field (that is prepopulated from link in email) (R7000)
+	194 - hiding full name field (R7000)
 	*/
 	#nf-field-132-wrap .nf-field-element,
 	#nf-field-189-container,
 	#nf-error-189 .nf-error-msg,
 	#nf-field-192-container,
-	#nf-field-193-container
+	#nf-field-136-wrap .nf-field-element,
+	#nf-field-195-container,
+	#nf-field-194-container
 	{
 		display: none;
 	}
@@ -646,3 +653,8 @@ jQuery(document).ready(function( $ ) {
 	}
 
 </style>
+
+
+<div class="nf-field-element">
+	<input type="text" value="" class="ninja-forms-field nf-element" id="nf-field-201" name="nf-field-201" aria-invalid="false" aria-describedby="nf-error-201" aria-labelledby="nf-label-field-201">
+</div>
