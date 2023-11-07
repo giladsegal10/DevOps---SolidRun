@@ -485,13 +485,45 @@ jQuery(document).ready(function( $ ) {
 	    var currentValue = jQuery('#nf-field-' + featuresIDs[name] + " option:selected").text();
       // console.log("this is: " + currentValue);
 		  if (currentValue) {
-				featureTexts.push(featTrueNames[name] + ": " + currentValue);
+				featureTexts.push("<b>" + featTrueNames[name] + "</b> : " + currentValue);
 		  } else {
-				featureTexts.push(featTrueNames[name] + ": ");
+				featureTexts.push("<b>" + featTrueNames[name] + "</b> : ");
+				jQuery('#nf-field-125').css({
+					'background-color': '#efefef',
+	        'color': '#000',
+	        'border-color': '#ccc',
+					'cursor': 'not-allowed'
+				})
 			}
 		}
-		jQuery('#nf-field-' + floatingBox).text(featureTexts.join('\n\n'));
+		jQuery('#floating-feature-div').html(featureTexts.join('<br>'));
     insertCopyButton();
+	}
+
+	// create div for left-down corner floating box
+	function createFloatingDiv() {
+		// Check if the div already exists
+		if ($('#floating-feature-div').length === 0) {
+				// Create the div and add properties
+				var $div = $('<div>', {
+						id: 'floating-feature-div',
+						css: {
+								'position': 'fixed',
+								'bottom': '20px',
+								'left': '10px',
+								'width': '320px',
+								'height': '450px',
+								'background-color': '#efefef',
+								'box-shadow': '0 0 10px rgba(0, 0, 0, 0.3)',
+								'padding': '10px',
+								'border-radius': '10px',
+								'z-index': '1000'
+						}
+				});
+
+				// Append the div to the body element
+				$('body').append($div);
+			}
 	}
 
 	// NOT IN USE
@@ -568,6 +600,7 @@ jQuery(document).ready(function( $ ) {
 	jQuery('#nf-field-' + enterHere).trigger('change'); // to manually trigger the input field
 
 	setTimeout(function() {
+			createFloatingDiv();
 			updateParagraphWithFeatures();
 			insertCopyButton();
 			addTitlesToOptions();
