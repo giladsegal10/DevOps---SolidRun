@@ -372,6 +372,92 @@ jQuery(document).ready(function( $ ) {
 		"EREAR:2SIM": "Required for modem",
 	};
 
+	var accessoriesDescriptions = {
+		"204-3": { // US AC Cable
+			title: "AC cable for PSU with North America plug",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#US-%7C-EU-%7C-UK-%7C-AU---AC-Cable"
+		},
+		"204-0": { // full kit
+			title: "The recommended kit for evaluating Bedrock V3000 Basic.\n\nKit includes:\n- PSU 90W (SRBD-PSU90)\n- US AC Cable (SRBD-CABUS)\n- EU AC Cable (SRBD-CABEU)\n- Stand for Bedrock (SRBD-STAND21)\n- Wall mounting bracket (SRBD-WALL21)\n- DIN Rail bracket (SRBD-DIN21)\n- Console mini-USB to USB-A (SRBD-CABCON)\n- SFP+ Module Copper (SRBD-SFP10GBT)\n- Pin for SIM / BIOS reset (SRBD-PIN)",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#Full-evaluation-kit-for-Bedrock-V3000-Basic"
+		},
+		"204-1": { // minimal kit
+			title: "Minimal evaluation kit is a low cost kit for trying out Bedrock.\n\nThe kit includes:\n- Power supply (SRBD-PSU90)\n- Stand (SRBD-STAND21)",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#Minimal-evaluation-kit-for-Bedrock"
+		},
+		"204-2": { // PSU-90W
+			title: "90W power supply.\nRequires AC cable C13 ('Kettle lead')",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#PSU-90W"
+		},
+		"204-4": { // EU AC Cable
+			title: "AC cable for PSU with European plug",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#US-%7C-EU-%7C-UK-%7C-AU---AC-Cable"
+		},
+		"204-5": { // UK AC Cable
+			title: "AC cable for PSU with UK plug",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#US-%7C-EU-%7C-UK-%7C-AU---AC-Cable"
+		},
+		"204-6": { // AU AC Cable
+			title: "AC cable for PSU with Australia plug",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#US-%7C-EU-%7C-UK-%7C-AU---AC-Cable"
+		},
+		"204-7": { // DC Cable
+			title: "Pigtail DC cable for Bedrock.\n\nTo be used with a 3rd party PSU.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#DC-Cable-Phoenix-connector"
+		},
+		"204-8": { // Stand
+			title: "A desktop stand for Bedrock.\n\nRequired for using Bedrock with no mounting.\n\nFollow link for more details.\n\nIncluded in both evaluation kits.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/456851457/Bedrock+V3000+Mounting+options#Stand"
+		},
+		"204-9": { // Wall
+			title: "A fixed mounting bracket for attaching Bedrock to a wall.\n\nFollow link for more details.\n\nIncluded in Full evaluation kit",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/456851457/Bedrock+V3000+Mounting+options#Wall-mounting"
+		},
+		"204-10": { // DIN Rail
+			title: "A bracket for mounting Bedrock onto a DIN rail.\n\nThe bracket is specially designed for Bedrock to maximize robustness and convenience.\n\nIncluded in Full Evaluation Kit\n\nFollow link for more details.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/456851457/Bedrock+V3000+Mounting+options#DIN-Rail-mounting"
+		},
+		"204-11": { // Remote btn
+			title: "A power button on a wire for turning Bedrock on/off when Bedrock is installed in an inaccessible location.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#Remote-power-button"
+		},
+		"204-12": { // Harness for btn
+			title: "A wire harness for soldering custom power button (optionally with LED) for turning Bedrock on/off when Bedrock is installed in an inaccessible location.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#Harness-for-custom-remote-power-button"
+		},
+		"204-13": { // Console
+			title: "Console is mini-USB connector with standard USB interface.\nThe mini-USB to USB-A allows connecting to a host PC.\n\nNote: Not needed if you have a mini-USB cable available.\n\nIncluded in Full Evaluation Kit",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#Console-mini-USB-to-USB-A"
+		},
+		"204-17": { // M.2 display adaptor
+			title: "Turns the headless Bedrock V3000 into a development board with a display. Simplifies initial setup and OS installation.",
+		},
+		"210-0": {
+			title: "SFP Module - direct attached cable",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-DAC"
+		},
+		"210-1": {
+			title: "SFP Module - direct attached cable",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-DAC"
+		},
+		"213-0": {
+			title: "SFP+ module with RJ45\n\n1 unit included in Full Evaluation Kit",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Copper"
+		},
+		"213-1": {
+			title: "SFP+ module with RJ45\n\n1 unit included in Full Evaluation Kit",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Copper"
+		},
+		"214-0": {
+			title: "SFP Module for Fibre Optics cable",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Fiber"
+		},
+		"214-1": {
+			title: "SFP Module for Fibre Optics cable",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Fiber"
+		},
+	};
+
 	// for email actions when submitting
 	var hiddenFieldsIDs = {
 		"email": 189, "full_name": 192,
@@ -476,6 +562,25 @@ jQuery(document).ready(function( $ ) {
 		});
 	}
 
+	// Add titles and hyperlinks to Accessories
+	function addTitlesToAccessories() {
+		jQuery.each(accessoriesDescriptions, function(id, info) {
+			// Set title for the checkbox and label
+			jQuery('#nf-field-' + id + ', label[for="nf-field-' + id + '"]').attr('title', info.title);
+
+			// If there is a link add click event to the label
+			if (info.link) {
+				var accessory = jQuery('label[for="nf-field-' + id + '"]');
+				var hyperlink = jQuery('<a>', {
+					href: info.link,
+					text: ' More Info',
+					target: '_blank'
+				});
+				accessory.append(hyperlink);
+			}
+		});
+	}
+
   // Function to update the features paragraph with selected values
 	function updateParagraphWithFeatures() {
   	//jQuery('#nf-field-' + floatingBox).trigger('change');
@@ -488,6 +593,7 @@ jQuery(document).ready(function( $ ) {
 				featureTexts.push("<b>" + featTrueNames[name] + "</b> : " + currentValue);
 		  } else {
 				featureTexts.push("<b>" + featTrueNames[name] + "</b> : ");
+				// disable submit button
 				jQuery('#nf-field-125').css({
 					'background-color': '#efefef',
 	        'color': '#000',
@@ -604,6 +710,7 @@ jQuery(document).ready(function( $ ) {
 			updateParagraphWithFeatures();
 			insertCopyButton();
 			addTitlesToOptions();
+			addTitlesToAccessories();
 			getQueryStringParameter();
 			CreateConfigString();
 			// enableOnlyCopyPaste();
