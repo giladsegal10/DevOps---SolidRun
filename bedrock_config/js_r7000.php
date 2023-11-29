@@ -55,6 +55,65 @@ jQuery(document).ready(function( $ ) {
     "EREAR:2SIM": "Required for modem",
   };
 
+  var accessoriesDescriptions = {
+    "221-0": { // full kit
+			title: "The recommended kit for evaluating Bedrock R7000 Basic.\n\nKit includes:\n- PSU 90W (SRBD-PSU90)\n- US AC Cable (SRBD-CABUS)\n- EU AC Cable (SRBD-CABEU)\n- Stand for Bedrock (SRBD-STAND21)\n- Wall mounting bracket (SRBD-WALL21)\n- DIN Rail bracket (SRBD-DIN21)\n- Console mini-USB to USB-A (SRBD-CABCON)\n- Pin for SIM / BIOS reset (SRBD-PIN)",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#Full-evaluation-kit-for-Bedrock-R7000-Basic"
+		},
+    "221-1": { // minimal kit
+			title: "Minimal evaluation kit is a low cost kit for trying out Bedrock.\n\nThe kit includes:\n- Power supply (SRBD-PSU90)\n- Stand (SRBD-STAND21)",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#Minimal-evaluation-kit-for-Bedrock"
+		},
+    "221-2": { // 90W power
+			title: "90W power supply.\nRequires AC cable C13 ('Kettle lead')",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#PSU-90W"
+		},
+    "221-3": { // US cable
+			title: "AC cable for PSU with North America plug",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#US-%7C-EU-%7C-UK-%7C-AU---AC-Cable"
+		},
+    "221-4": { // EU cable
+			title: "AC cable for PSU with European plug",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#US-%7C-EU-%7C-UK-%7C-AU---AC-Cable"
+		},
+    "221-5": { // UK cable
+			title: "AC cable for PSU with UK plug",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#US-%7C-EU-%7C-UK-%7C-AU---AC-Cable"
+		},
+    "221-6": { // AU cable
+			title: "AC cable for PSU with Australia plug",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#US-%7C-EU-%7C-UK-%7C-AU---AC-Cable"
+		},
+    "221-7": { // DC Cable
+			title: "Pigtail DC cable for Bedrock.\n\nTo be used with a 3rd party PSU.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#DC-Cable-Phoenix-connector"
+		},
+    "221-8": { // Stand
+			title: "A desktop stand for Bedrock.\n\nRequired for using Bedrock with no mounting.\n\nFollow link for more details.\n\nIncluded in both evaluation kits.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/456851457/Bedrock+V3000+Mounting+options#Stand"
+		},
+    "221-9": { // Wall bracket
+			title: "A fixed mounting bracket for attaching Bedrock to a wall.\n\nFollow link for more details.\nIncluded in Full evaluation kit",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/456851457/Bedrock+V3000+Mounting+options#Wall-mounting"
+		},
+    "221-10": { // DIN bracket
+			title: "A bracket for mounting Bedrock onto a DIN rail.\n\nThe bracket is specially designed for Bedrock to maximize robustness and convenience.\n\nIncluded in Full Evaluation Kit.\n\nFollow link for more details.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/456851457/Bedrock+V3000+Mounting+options#DIN-Rail-mounting"
+		},
+    "221-11": { // Remote btn
+			title: "A power button on a wire for turning Bedrock on/off when Bedrock is installed in an inaccessible location.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#Remote-power-button"
+		},
+    "221-12": { // custom power btn
+			title: "A wire harness for soldering custom power button (optionally with LED) for turning Bedrock on/off when Bedrock is installed in an inaccessible location.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#Harness-for-custom-remote-power-button"
+		},
+    "221-13": { // Console
+			title: "Console is mini-USB connector with standard USB interface.\nThe mini-USB to USB-A allows connecting to a host PC.\n\nNote: Not needed if you have a mini-USB cable available.\n\nIncluded in Full Evaluation Kit.",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492470278/Bedrock+R7000+Accessories#Console-mini-USB-to-USB-A"
+		},
+  }
+
 
 
   // for email actions when submitting
@@ -145,21 +204,70 @@ jQuery(document).ready(function( $ ) {
 		});
 	}
 
+  // Add titles and hyperlinks to Accessories
+  function addTitlesToAccessories() {
+    jQuery.each(accessoriesDescriptions, function(id, info) {
+      // Set title for the checkbox and label
+      jQuery('#nf-field-' + id + ', label[for="nf-field-' + id + '"]').attr('title', info.title);
+      // If there is a link add click event to the label
+      if (info.link) {
+        var accessory = jQuery('label[for="nf-field-' + id + '"]');
+        var hyperlink = jQuery('<a>', {
+          href: info.link,
+          text: ' More Info',
+          target: '_blank'
+        });
+        accessory.append(hyperlink);
+                        }
+    });
+  }
+
+
   // Function to update the features paragraph with selected values
 	function updateParagraphWithFeatures() {
-  	//jQuery('#nf-field-' + floatingBox).trigger('change');
 		var featureTexts = [];
 		for (var name in featuresIDs) {
-    	// jQuery('#nf-field-' + featuresIDs[name]).trigger('change');
 	    var currentValue = jQuery('#nf-field-' + featuresIDs[name] + " option:selected").text();
-      // console.log("this is: " + currentValue);
 		  if (currentValue) {
-				featureTexts.push(featTrueNames[name] + ": " + currentValue);
+				featureTexts.push("<b>" + featTrueNames[name] + "</b> : " + currentValue);
 		  } else {
-				featureTexts.push(featTrueNames[name] + ": ");
+				featureTexts.push("<b>" + featTrueNames[name] + "</b> : ");
+        // disable submit button
+				jQuery('#nf-field-142').css({
+					'background-color': '#efefef',
+	        'color': '#000',
+	        'border-color': '#ccc',
+					'cursor': 'not-allowed'
+				})
 			}
 		}
-		jQuery('#nf-field-' + floatingBox).text(featureTexts.join('\n\n'));
+		jQuery('#floating-feature-div').html(featureTexts.join('<br>'));
+	}
+
+  // create div for left-down corner floating box
+	function createFloatingDiv() {
+		// Check if the div already exists
+		if ($('#floating-feature-div').length === 0) {
+				// Create the div and add properties
+				var $div = $('<div>', {
+						id: 'floating-feature-div',
+						css: {
+								'position': 'fixed',
+								'bottom': '20px',
+								'left': '10px',
+								'width': '320px',
+								'height': '450px',
+								'background-color': '#efefef',
+								'box-shadow': '0 0 10px rgba(0, 0, 0, 0.3)',
+								'padding': '10px',
+								'border-radius': '10px',
+								'z-index': '1000'
+						}
+				});
+
+				// Append the div to the body element
+				$('body').append($div);
+			}
 	}
 
   // Function to get query string parameters
@@ -210,8 +318,10 @@ jQuery(document).ready(function( $ ) {
 	jQuery('#nf-field-' + enterHere).trigger('change'); // to manually trigger the input field
 
   setTimeout(function() {
+    createFloatingDiv();
     updateParagraphWithFeatures();
     addTitlesToOptions();
+    addTitlesToAccessories();
     getQueryStringParameter();
     CreateConfigString();
   }, 250);
