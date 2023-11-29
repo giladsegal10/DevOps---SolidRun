@@ -432,31 +432,22 @@ jQuery(document).ready(function( $ ) {
 		"204-17": { // M.2 display adaptor
 			title: "Turns the headless Bedrock V3000 into a development board with a display. Simplifies initial setup and OS installation.",
 		},
-		"210-0": {
-			title: "SFP Module - direct attached cable",
-			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-DAC"
-		},
-		"210-1": {
-			title: "SFP Module - direct attached cable",
-			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-DAC"
-		},
-		"213-0": {
-			title: "SFP+ module with RJ45\n\n1 unit included in Full Evaluation Kit",
-			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Copper"
-		},
-		"213-1": {
-			title: "SFP+ module with RJ45\n\n1 unit included in Full Evaluation Kit",
-			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Copper"
-		},
-		"214-0": {
-			title: "SFP Module for Fibre Optics cable",
-			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Fiber"
-		},
-		"214-1": {
-			title: "SFP Module for Fibre Optics cable",
-			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Fiber"
-		},
 	};
+
+	var sfp_accessories = {
+		"216": {
+			title: "SFP Module - direct attached cable",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-DAC"
+		},
+		"217": {
+			title: "SFP+ module with RJ45\n\n1 unit included in Full Evaluation Kit",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Copper"
+		},
+		"218": {
+			title: "SFP Module for Fibre Optics cable",
+			link: "https://solidrun.atlassian.net/wiki/spaces/developer/pages/492994561/Bedrock+V3000+Accessories#SFP%2B-Module-Fiber"
+		},
+	}
 
 	// for email actions when submitting
 	var hiddenFieldsIDs = {
@@ -578,6 +569,22 @@ jQuery(document).ready(function( $ ) {
 				});
 				accessory.append(hyperlink);
 			}
+		});
+		// setting title and link to dropdowns
+		jQuery.each(sfp_accessories, function(id, info) {
+			// set the title for all the options in the dropdown
+			jQuery('#nf-field-' + id)
+				.attr('title', info.title)
+				.css({'width': '30%', 'margin': '0'});
+
+			// adding link below the dropdown
+			var hyperlink = jQuery('<a>', {
+				href: info.link,
+				text: 'More Info',
+				target: '_blank',
+				css: {'font-weight': 'bold'}
+			});
+			jQuery('#nf-field-' + id).after(hyperlink);
 		});
 	}
 
