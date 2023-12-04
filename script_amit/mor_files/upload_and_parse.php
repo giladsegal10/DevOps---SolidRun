@@ -79,6 +79,18 @@ function parseExcelData($data, $prclient) {
     header_transfer("noColumnsFound", null); // moves back to index.html - convert fail
   }
 
+  /*
+    PART 1 - handling with the BOM sku's
+
+    Since the cols array holds BOM skus names, and they can be wrriten wrong,
+    the cols_dic will hold the correct names of those BOM skus (using fix_errors_check_valid function).
+    If a BOM sku not exist, we insert it to $not_valid_sku_bom array.
+
+    We go in a loop on all the columns names which are BOM sku and we fix them and check if they are valid.
+    If they are valid, we GET their all sons hierarchy tree (from ZUC_FULLPARTTREE in priority) with
+    their quantities. We save each BOM sku sons tree in $skuBomArr and each $skuBomArr insert to $bom_skus_mat
+  */
+
   // for not-existing BOM sku's
   $not_valid_sku_bom = array();
   // Initialize a dictionary to hold correct sku names for API
@@ -94,9 +106,10 @@ function parseExcelData($data, $prclient) {
         $query = 'ZUC_FULLPARTTREE?$filter=PARTNAME%20eq%20%27' . $fixedColName . '%27';
         $res = $prclient->get($query);
         $res = json_decode($res,true);
-        $skuBomArr = array();
+        $skuBomArr = array(); // array for each BOM sku with his sons and their respective quantities
         $skuBomArr["sku_name"] = $fixedColName;
         foreach ($res['value'] as $skuBomData) {
+          // the son can appear more then once so we add all the quantities
           if (empty($skuBomArr[$skuBomData['PARTNAMECH']]))
             $skuBomArr[$skuBomData['PARTNAMECH']] = $skuBomData['RATIO'];
           else
@@ -111,6 +124,15 @@ function parseExcelData($data, $prclient) {
     }
   }
 
+  /*
+    PART 2 - extracting relevant data from sku rows
+
+    Going through the data of the excel (row after row) until we find the headres row (usually row 7)
+    When we found it we mark it with a flag (foundItem) and we store the relevant cells according
+    to the cols indexesץ
+
+    We store every row data (sku data) inside $desiredData array.
+  */
   $desiredData = array(); // Initialize an array to store the desired data
   $foundItem = false;
   foreach ($data as $subArr) {
@@ -141,6 +163,16 @@ function parseExcelData($data, $prclient) {
     }
   }
 
+
+  /*
+    PART 3 - Preparing every row (sku data) in organized format
+
+    In this step we check if the written sku names, prices and BOM quantities
+    that are wrriten in the excecl are equal to the names prices and BOM quantities
+    that are written in priority.
+
+    We organize the data so each property has also 'status' of OK or NOT OK
+  */
   $resultData = array();
   $resultData[] = $not_valid_sku_bom;
   foreach (array_slice($desiredData, 1) as $sku_excel_array) {
@@ -186,6 +218,7 @@ function parseExcelData($data, $prclient) {
       $skuData["Price Status"] = $price_status;
 
       if (!empty($bom_skus_mat)) {
+        // check if BOM quantities in excel are equal to those from priority ($bom_skus_mat)
         $bom_msg = check_bom_sku($partname, $price, $sku_excel_array, $bom_skus_mat, $sku);
         // arranging the Data for creating CSV file
         foreach ($bom_skus_mat as $bom_sku) {
@@ -203,6 +236,17 @@ function parseExcelData($data, $prclient) {
 }
 
 function findCols_v2($data, $partname, $price) {
+  /*
+    This function searches for the headers row (where "Customer Part Number" is)
+    The BOM sku's changing from excel to excel, but their respective location is
+    always after 'Remarks' header.
+
+    So if we found 'Remarks' we mark it with a flag and save the header
+    (which must be an BOM sku)
+
+    We return the index_array so the key is the column name and
+    the value is the index.
+  */
   $index_array = array();
   $foundRemarks = false;
   $foundPartname = $foundPrice = false;
@@ -235,8 +279,10 @@ function findCols_v2($data, $partname, $price) {
 
 
 function fix_errors_check_valid($skuName, $prclient) {
-  // this function trims spaces and special chars
-  // also it checks if the sku is found in priority
+  /*
+    this function trims spaces and special chars
+    also it checks if the sku is found in priority
+  */
   $new_sku = trim($skuName);
   // Check if the sku name contains "_"
   if (strpos($new_sku, "_") !== false) {
@@ -257,7 +303,13 @@ function fix_errors_check_valid($skuName, $prclient) {
 }
 
 function parsePartNumber($multi_sku) {
-  // Check if the input string contains the delimiter "_x000D_\n"
+  /*
+    Check if this entry (excel cell) includes more them one sku name.
+    It doing so by checking if the input string contains the delimiter "_x000D_\n".
+
+    If so, it split it to the sku names and returns them as array.
+    If not, then it is one sku name - it returns as array
+  */
   $delim = "_x000D_\n";
   if (strpos($multi_sku, $delim) !== false) {
     // Split the input string based on the delimiter
@@ -272,6 +324,13 @@ function parsePartNumber($multi_sku) {
 }
 
 function check_bom_sku($partname, $price, $sku_excel_array, $bom_skus_mat, $sku) {
+  /*
+    In this function we check, per sku row, if the BOM quantities that is written
+    in his row are equal to those on priority ($bom_skus_mat).
+
+    We arrange the data in array that fits the format to enter later to the csv.
+    We return this array.
+  */
   foreach ($sku_excel_array as $bom_excel_sku => $excel_val) {
     if ($bom_excel_sku != $partname && $bom_excel_sku != $price) { // not name or price
       if (!empty($bom_skus_mat[$bom_excel_sku][$sku])) { // if it's on priority it's not empty
@@ -284,7 +343,7 @@ function check_bom_sku($partname, $price, $sku_excel_array, $bom_skus_mat, $sku)
           $msg = "NOT OK";
         }
       }
-      else { // The part number sku not related to bom sku
+      else { // The part number sku not related to bom sku - this sku is not a son to BOM sku
         $api_val = "Not in priority";
         if ($excel_val == "") { // case 3: not exist in priority and not in excel
           $excel_val = "Not in excel";
@@ -302,7 +361,6 @@ function check_bom_sku($partname, $price, $sku_excel_array, $bom_skus_mat, $sku)
 }
 
 function create_csv($resultData, $csv_path) {
-  // $serverPath = "/var/www/gilad_segal/excel_parsing/uploads";
   // Create a CSV file
   $csvFile = fopen($csv_path, "w");
 

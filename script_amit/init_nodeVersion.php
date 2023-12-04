@@ -39,19 +39,19 @@ $api_price = "SECONDPRICE";
 $cols = findCols_v2($data, $partname, $price);
 print_r($cols);
 
-// foreach ($data as $subArr) {
-//   $subArr = (array) $subArr;
-//   $partname_index = $cols[$partname];
-//   $price_index = $cols[$price];
-//   if (key_exists($partname_index, $subArr) && key_exists($price_index, $subArr)) {
-//     print_r($subArr[$partname_index]);
-//     echo " ";
-//     print_r($subArr[$price_index]);
-//     echo "\n";
-//   }
-// }
+/*
+  PART 1 - handling with the BOM sku's
 
+  Since the cols array holds BOM skus names, and they can be wrriten wrong,
+  the cols_dic will hold the correct names of those BOM skus (using fix_errors_check_valid function).
+  If a BOM sku not exist, we insert it to $not_valid_sku_bom array.
 
+  We go in a loop on all the columns names which are BOM sku and we fix them and check if they are valid.
+  If they are valid, we GET their all sons hierarchy tree (from ZUC_FULLPARTTREE in priority) with
+  their quantities. We save each BOM sku sons tree in $skuBomArr and each $skuBomArr insert to $bom_skus_mat
+*/
+
+// for not-existing BOM sku's
 $not_valid_sku_bom = array();
 // Initialize a dictionary to hold correct sku names for API
 $cols_dic = array();
@@ -68,10 +68,11 @@ foreach ($cols as $columnName => $col_num) {
       $res = json_decode($res,true);
       // print_r($res);
       // echo "\n##############\n";
-      $skuBomArr = array();
+      $skuBomArr = array(); // array for each BOM sku with his sons and their respective quantities
       $skuBomArr["sku_name"] = $fixedColName;
       foreach ($res['value'] as $skuBomData) {
         // print_r($skuBomData);
+        // the son can appear more then once so we add all the quantities
         if (empty($skuBomArr[$skuBomData['PARTNAMECH']]))
           $skuBomArr[$skuBomData['PARTNAMECH']] = $skuBomData['RATIO'];
         else {
@@ -91,6 +92,16 @@ foreach ($cols as $columnName => $col_num) {
 // print_r($not_valid_sku_bom);
 // die();
 
+
+/*
+  PART 2 - extracting relevant data from sku rows
+
+  Going through the data of the excel (row after row) until we find the headres row (usually row 7)
+  When we found it we mark it with a flag (foundItem) and we store the relevant cells according
+  to the cols indexesץ
+
+  We store every row data (sku data) inside $desiredData array.
+*/
 $desiredData = array(); // Initialize an array to store the desired data
 $foundItem = false;
 foreach ($data as $subArr) {
@@ -126,6 +137,16 @@ foreach ($data as $subArr) {
 // die();
 
 
+
+/*
+  PART 3 - Preparing every row (sku data) in organized format
+
+  In this step we check if the written sku names, prices and BOM quantities
+  that are wrriten in the excecl are equal to the names prices and BOM quantities
+  that are written in priority.
+
+  We organize the data so each property has also 'status' of OK or NOT OK
+*/
 $resultData = array();
 $resultData[] = $not_valid_sku_bom;
 // print_r($resultData);
@@ -176,6 +197,7 @@ foreach (array_slice($desiredData, 1) as $sku_excel_array) {
     $skuData["Price Status"] = $price_status;
 
     if (!empty($bom_skus_mat)) {
+      // check if BOM quantities in excel are equal to those from priority ($bom_skus_mat)
       $bom_msg = check_bom_sku($partname, $price, $sku_excel_array, $bom_skus_mat, $sku);
       // arranging the Data for creating CSV file
       foreach ($bom_skus_mat as $bom_sku) {
@@ -222,95 +244,22 @@ fclose($csvFile);
 
 echo "CSV file created successfully!\n";
 
-
-
-// $num = count($desiredData);
-// for ($i=20; $i<30; $i++) {
-//   $sku = parsePartNumber($desiredData[$i][$partname]);
-//   # for the case of two or more skus in one cell
-//   $counter = 0;
-//   do {
-//     try { //$sku[$counter]
-//       $res = $prclient->get('LOGPART(\'' . $sku[$counter] . '\')');
-//       $res = json_decode($res,true);
-//       # 1. There is match between prices
-//       if ($res[$api_price] == $desiredData[$i][$price]) {
-//         $price_status = $i+1 . ". SKU " . $res[$api_partname] . ": unit price is OK\n";
-//         echo $msg;
-//         $resultData[] = array($res[$api_partname], $msg);
-//       # 2. No price for the sku in the excel file
-//       } else {
-//         if ($desiredData[$i][$price] == "") {
-//           $desiredData[$i][$price] = "NOT INCLUDED";
-//         }
-//         $msg = $i+1 . ". SKU " . $res[$api_partname] . ": unit price is NOT OK - CSV unit price is: " . $desiredData[$i][$price] . " and Priority unit price is: " . $res[$api_price] . "\n";
-//         echo $msg;
-//         $resultData[] = array($res[$api_partname], $msg);
-//       }
-//     } catch (Exception $e) {
-//       $msg = $i+1 . ". SKU " . $desiredData[$i][$partname] . ": Customer Part Number not found in SolidRun Priority\n";
-//       echo $msg;
-//       $resultData[] = array($desiredData[$i][$partname], $msg);
-//     }
-//
-//     $counter++;
-//   } while ($counter < count($sku));
-// }
-//
-// file_put_contents('amit_result.txt', print_r($resultData, true));
-
-################# check single sku ###################
-
-# required fields as written in Priority API
-// $api_price = "SECONDPRICE";
-// $api_partname = "PARTNAME";
-//
-// $sku = "'SRT6442W00D01GE008V11I0'";
-// $res = $prclient->get('LOGPART(\'' . $sku . '\')');
-// $res = $prclient->get('ZUC_FULLPARTTREE(\'' . $sku . '\')');
-// $res = $prclient->get('ZUC_FULLPARTTREE?$filter=PARTNAME%20eq%20' . $sku);
-// $res = json_decode($res,true);
-//echo "\nPart SKU: " . $res[$api_partname] . "; Part Price: " . $res[$api_price] . "\n";
-
-// print_r($res);
-// print_r(count($res['value']));
-// echo "\n";
-//print_r($res['value'][112]['RATIO']);
-// $new_res = make_ch_array($res['value']);
-// print_r($new_res);
-
-// $partname = "Customer Part Number";
-// $price = "Unit Price based on Sales Currency\nVolume 1";
-// $parent_sku_1 = "SRHBCTCV12";
-// $parent_sku_2 = "SRT6442W00D01GE008V11I0_01";
-// $parent_sku_3 = "TCMP8QDW00D01GE008T01I0";
-//
-//
-// $cols_array = array($partname, $price, $parent_sku_1, $parent_sku_2, $parent_sku_3);
-//
-//
-// $variableNames = array(
-//     "Customer Part Number",
-//     "Unit Price based on Sales Currency\nVolume 1",
-//     "SRHBCTCV12",
-//     "SRT6442W00D01GE008V11I0_01",
-//     "TCMP8QDW00D01GE008T01I0"
-// );
-//
-// $variables = array();
-//
-// foreach ($variableNames as $name) {
-//     $variables[$name] = null;
-// }
-//
-// print_r($variables);
-
-
-################# check single sku ###################
-
 die();
+################# functions ###################
+
 
 function findCols_v2($data, $partname, $price) {
+  /*
+    This function searches for the headers row (where "Customer Part Number" is)
+    The BOM sku's changing from excel to excel, but their respective location is
+    always after 'Remarks' header.
+
+    So if we found 'Remarks' we mark it with a flag and save the header
+    (which must be an BOM sku)
+
+    We return the index_array so the key is the column name and
+    the value is the index.
+  */
   $index_array = array();
   $foundRemarks = false;
   // $partname_col = $price_col = false;
@@ -343,7 +292,13 @@ function findCols_v2($data, $partname, $price) {
 }
 
 function check_bom_sku($partname, $price, $sku_excel_array, $bom_skus_mat, $sku) {
-  // $msg = "\tQuantity per BOM for the following SKU's:\n";
+  /*
+    In this function we check, per sku row, if the BOM quantities that is written
+    in his row are equal to those on priority ($bom_skus_mat).
+
+    We arrange the data in array that fits the format to enter later to the csv.
+    We return this array.
+  */
   foreach ($sku_excel_array as $bom_excel_sku => $excel_val) {
     if ($bom_excel_sku != $partname && $bom_excel_sku != $price) { // not name or price
       if (!empty($bom_skus_mat[$bom_excel_sku][$sku])) { // if it's on priority it's not empty
@@ -356,7 +311,7 @@ function check_bom_sku($partname, $price, $sku_excel_array, $bom_skus_mat, $sku)
           $msg = "NOT OK";
         }
       }
-      else { // The part number sku not related to bom sku
+      else { // The part number sku not related to bom sku - this sku is not a son to BOM sku
         $api_val = "Not in priority";
         if ($excel_val == "") { // case 3: not exist in priority and not in excel
           $excel_val = "Not in excel";
@@ -373,72 +328,14 @@ function check_bom_sku($partname, $price, $sku_excel_array, $bom_skus_mat, $sku)
   return $sku_msgs;
 }
 
-function findCols($handle, $partname, $price) {
-  // Skip the first 6 rows to get to the row with headers
-  for ($i = 1; $i <= 7; $i++) {
-    $headerRow = fgetcsv($handle, 100000, ",");
-    // print_r(count($headerRow));
-  }
-
-  // $headerRow = fgetcsv($handle, 16383, ",");
-  $headerIndexes = array_flip($headerRow);
-  // print_r($headerIndexes);
-  // die();
-  $cols = array();
-
-  if (isset($headerIndexes[$partname]) && isset($headerIndexes[$price])) {
-    $cols[$partname] = $headerIndexes[$partname];
-    $cols[$price] = $headerIndexes[$price];
-  }
-  else { // if partname col or price call doesn't exist go back
-    echo "something wrong with names or locations\n";
-    return;
-  }
-
-  foreach ($headerRow as $index => $value) {
-    // echo $index . " and " . $value . "\n";
-    if ($value == "Remarks" || $value == "Remarks\n") {
-      $i = $index + 1;
-      while (!empty($headerRow[$i])) {
-        $cols[$headerRow[$i]] = $i;
-        $i++;
-      }
-      return $cols;
-    }
-  }
-  echo "something wrong with 'Remarks' name or location";
-  return;
-}
-
-// function findCols($handle) {
-//   // find required cols according to Amit
-//   // if they are not found something wrong with the excel file
-//   $sku_header = "Customer Part Number";
-//   $unit_price_header = "Unit Price based on Sales Currency\nVolume 1";
-//   $sku_col = null;
-//   $unit_price_col = null;
-//   while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-//     $num = count($data);
-//     for ($c=0; $c<$num; $c++) {
-//       if ($data[$c] == $sku_header){
-//         $sku_col=$c;
-//         echo "sku header column number is: " . $sku_col . "<br />\n";
-//       }
-//       else if ($data[$c] == $unit_price_header){
-//         $unit_price_col=$c;
-//         echo "unit price header column number is: " . $unit_price_col . "<br />\n";
-//       }
-//       if (!is_null($sku_col) && !is_null($unit_price_col)) {
-//         return array($sku_col, $unit_price_col);
-//       }
-//     }
-//   }
-//   return false;
-// }
-
 function parsePartNumber($inputString) {
-  // Check if the input string contains the delimiter "_x000D_\n"
-  // echo $inputString . "\n";
+  /*
+    Check if this entry (excel cell) includes more them one sku name.
+    It doing so by checking if the input string contains the delimiter "_x000D_\n".
+
+    If so, it split it to the sku names and returns them as array.
+    If not, then it is one sku name - it returns as array
+  */
   $delim = "_x000D_\n";
   if (strpos($inputString, $delim) !== false) {
       // Split the input string based on the delimiter
@@ -455,8 +352,10 @@ function parsePartNumber($inputString) {
 }
 
 function fix_errors_check_valid($skuName, $prclient) {
-  // this function trims spaces and special chars
-  // also it checks if the sku is found in priority
+  /*
+    this function trims spaces and special chars
+    also it checks if the sku is found in priority
+  */
   $new_sku = trim($skuName);
   // Check if the sku name contains "_"
   if (strpos($new_sku, "_") !== false) {
@@ -475,9 +374,4 @@ function fix_errors_check_valid($skuName, $prclient) {
     return "Not checked in part tree";
   return $new_sku;
 }
-
-// %20 --- space
-// %2B --- +
-// %27 --- '
-// מחולל מסכים -> עמודת שם מסך איי פי איי לדוגמא לןגפארט
- ?>
+?>
