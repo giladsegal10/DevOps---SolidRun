@@ -140,8 +140,7 @@ jQuery(document).ready(function( $ ) {
 		"email": 189, "full_name": 192,
 	};
 
-	var enterHere = 188, 		// id of input field for configuration string
-	    floatingBox = 185;	// id of floating box
+	var enterHere = 188; 		// id of input field for configuration string
 
 	// Custom event that will be triggered after updating a field
   var UPDATE_EVENT = 'updateFeatures';
@@ -268,6 +267,7 @@ jQuery(document).ready(function( $ ) {
 				featureTexts.push("<b>" + featTrueNames[name] + "</b> : " + currentValue);
 		  } else {
 				featureTexts.push("<b>" + featTrueNames[name] + "</b> : ");
+        // disable the subit button because a certain feature was not selected 
 				jQuery('#nf-field-125').css({
 					'background-color': '#efefef',
 	        'color': '#000',
@@ -305,7 +305,7 @@ jQuery(document).ready(function( $ ) {
 			}
 	}
 
-	// Function to get query string parameters
+	// Function to get query string parameters for email and full name (hidden fields in the form)
 	function getQueryStringParameter() {
 	  jQuery.each(hiddenFieldsIDs, function(param, id) {
 	    hiddenField = param;

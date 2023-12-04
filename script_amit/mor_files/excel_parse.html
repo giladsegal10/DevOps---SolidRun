@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Upload OneDrive Excel File</title>
+    <link rel = "stylesheet" type = "text/css" href = "../css/excel_upload.css">
+    <link rel="icon" href="sd_icon.png" type="image/x-icon">
+</head>
+<body onload="javascript:checkMode()">
+  <div class="container">
+    <img src="logoSR.webp" alt="Logo" class="logo">
+    <h1>Upload OneDrive Excel File</h1>
+    <form id="uploadForm" action="upload_and_parse.php" method="post" enctype="multipart/form-data" onsubmit="showSpinnerHideForm();">
+      <label for="fname">Key:</label><br><br>
+      <input type="password" id="key" name="key"><br><br>
+      <label for="fname">Select excel file to upload:</label><br><br>
+      <input type="file" name="fileToUpload" id="fileToUpload"><br><br><br>
+      <input type="submit" value="Upload File" name="submit" id="submitBtn">
+    </form>
+
+    <div id="loading-container">
+      <div id="loading-spinner"></div>
+      <div id="msg-container">Excel file is being processed...</div>
+    </div>
+
+    <script>
+      // function to show the spinner and hide the form
+      function showSpinnerHideForm() {
+        document.getElementById("uploadForm").style.display = "none";
+        document.getElementById("loading-container").style.display = "block";
+      }
+
+      function checkMode() {
+        let url = new URL(window.location.href);
+        let state = url.searchParams.get("state");
+        let csvName = url.searchParams.get("csvName");
+        switch (state) {
+          case null:
+            return;
+          case "missingKey":
+            alert("Key is missing. Please enter the key.");
+            break;
+          case "wrongKey":
+            alert("Invalid key. Access denied.");
+            break;
+          case "notExcelFile":
+            alert("Only Excel files (XLSX or XLS) are allowed.");
+            break;
+          case "uploadFail":
+            alert("Sorry, there was an error uploading your file.");
+            break;
+          case "missingFile":
+            alert("No file was selected.");
+            break;
+          case "phpExecFail":
+            alert("Execution of second php script failed\nUsing NodeJs.");
+            break;
+          case "noColumnsFound":
+            alert("Wrong columns names, check excel file.");
+            break;
+          case "success":
+            alert("Success, CSV file created!");
+            // Replace 'fileURL' with the actual URL of your CSV file
+            const fileURL = `http://localhost/excel_parsing/uploads/${csvName}.csv`;
+            // Open the CSV file in a new tab
+            const newWindow = window.open(fileURL, '_blank');
+            if (newWindow) {
+              newWindow.focus();
+            } else {
+              alert('Please allow pop-ups to open the CSV file in a new tab.');
+            }
+            break;
+          default:
+            alert("Error, Default case please contact Gilad.");
+        }
+        window.location.replace("http://localhost/excel_parsing/excel_parse.html");
+      }
+    </script>
+</body>
+</html>
